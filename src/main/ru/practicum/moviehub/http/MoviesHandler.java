@@ -6,13 +6,10 @@ import ru.practicum.moviehub.model.Movie;
 import ru.practicum.moviehub.store.MoviesStore;
 
 import java.io.IOException;
-import java.nio.charset.StandardCharsets;
 import java.util.ArrayList;
 import java.util.List;
 
 import static java.net.HttpURLConnection.*;
-import static java.net.HttpURLConnection.HTTP_BAD_REQUEST;
-import static java.net.HttpURLConnection.HTTP_UNSUPPORTED_TYPE;
 
 public class MoviesHandler extends BaseHttpHandler {
     private final MoviesStore store;
