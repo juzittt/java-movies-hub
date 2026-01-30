@@ -2,10 +2,7 @@ package ru.practicum.moviehub.http;
 
 import com.google.gson.Gson;
 import com.google.gson.JsonObject;
-import org.junit.jupiter.api.AfterAll;
-import org.junit.jupiter.api.BeforeAll;
-import org.junit.jupiter.api.BeforeEach;
-import org.junit.jupiter.api.Test;
+import org.junit.jupiter.api.*;
 import ru.practicum.moviehub.api.ErrorResponse;
 import ru.practicum.moviehub.model.Movie;
 import ru.practicum.moviehub.store.MoviesStore;
@@ -106,6 +103,7 @@ public class MoviesApiTest {
     }
 
     @Test
+    @DisplayName("GET /movies — возвращает пустой массив, если фильмов нет")
     void getMovies_whenEmpty_returnsEmptyArray() {
         HttpResponse<String> response = movieGetRequest("/movies");
 
@@ -115,6 +113,7 @@ public class MoviesApiTest {
     }
 
     @Test
+    @DisplayName("GET /movies — возвращает список фильмов, если они есть")
     void getMovies_whenHasMovies_returnsListOfMovies() {
         Movie expected = new Movie();
         expected.setTitle("Interstellar");
@@ -133,6 +132,7 @@ public class MoviesApiTest {
     }
 
     @Test
+    @DisplayName("POST /movies — создаёт фильм и возвращает статус 201")
     void postMovie_whenValid_returnsCreated() {
         String json = createMovieJson("The Matrix", 1999, "Action");
         HttpResponse<String> response = moviePostRequest(json);
@@ -147,6 +147,7 @@ public class MoviesApiTest {
     }
 
     @Test
+    @DisplayName("POST /movies — при пустом названии возвращает 422 и ошибку валидации")
     void postMovie_whenEmptyTitle_returnsUnprocessableEntity() {
         String json = createMovieJson("", 1999);
         HttpResponse<String> response = moviePostRequest(json);
@@ -158,6 +159,7 @@ public class MoviesApiTest {
     }
 
     @Test
+    @DisplayName("POST /movies — при слишком длинном названии возвращает 422")
     void postMovie_whenTitleTooLong_returnsUnprocessableEntity() {
         String longTitle = "A".repeat(101);
         String json = createMovieJson(longTitle, 1999);
@@ -169,6 +171,7 @@ public class MoviesApiTest {
     }
 
     @Test
+    @DisplayName("POST /movies — при некорректном годе выпуска возвращает 422")
     void postMovie_whenInvalidYear_returnsUnprocessableEntity() {
         String json = createMovieJson("Old Film", 1000);
         HttpResponse<String> response = moviePostRequest(json);
@@ -181,6 +184,7 @@ public class MoviesApiTest {
     }
 
     @Test
+    @DisplayName("POST /movies — при неверном Content-Type возвращает 415")
     void postMovie_whenInvalidContentType_returnsUnsupportedMediaType() {
         HttpRequest request = HttpRequest.newBuilder()
                 .uri(URI.create(BASE + "/movies"))
@@ -197,6 +201,7 @@ public class MoviesApiTest {
     }
 
     @Test
+    @DisplayName("POST /movies — при некорректном JSON в теле возвращает 422")
     void postMovie_whenInvalidJson_returnsUnprocessableEntity() {
         String invalidJson = "{\"title\": \"A\", \"releaseYear\": 2000,}";
 
@@ -209,6 +214,7 @@ public class MoviesApiTest {
     }
 
     @Test
+    @DisplayName("POST /movies — при передаче массива вместо объекта возвращает 422")
     void postMovie_whenJsonArray_returnsUnprocessableEntity() {
         String jsonArray = "[{\"title\": \"A\", \"releaseYear\": 2000, \"genre\": \"Action\"}]";
         HttpResponse<String> response = moviePostRequest(jsonArray);
@@ -220,6 +226,7 @@ public class MoviesApiTest {
     }
 
     @Test
+    @DisplayName("POST /movies — при ошибке валидации фильм не сохраняется")
     void postMovie_whenValidationFails_movieIsNotSaved() {
         moviePostRequest(createMovieJson("", 1000));
 
@@ -230,6 +237,7 @@ public class MoviesApiTest {
     }
 
     @Test
+    @DisplayName("GET /movies/{id} — возвращает фильм, если он существует")
     void getMovieById_whenExists_returnsMovie() {
         Movie movie = new Movie();
         movie.setTitle("Avatar");
@@ -244,6 +252,7 @@ public class MoviesApiTest {
     }
 
     @Test
+    @DisplayName("GET /movies/{id} — возвращает 404, если фильм не найден")
     void getMovieById_whenNotFound_returnsNotFound() {
         HttpResponse<String> response = movieGetRequest("/movies/999");
         ErrorResponse error = parseError(response);
@@ -253,6 +262,7 @@ public class MoviesApiTest {
     }
 
     @Test
+    @DisplayName("GET /movies/{id} — возвращает 400, если ID не число")
     void getMovieById_whenIdNotNumber_returnsBadRequest() {
         HttpResponse<String> response = movieGetRequest("/movies/abc");
         ErrorResponse error = parseError(response);
@@ -262,6 +272,7 @@ public class MoviesApiTest {
     }
 
     @Test
+    @DisplayName("DELETE /movies/{id} — удаляет фильм и возвращает 204")
     void deleteMovie_whenExists_returnsNoContent() {
         Movie saved = store.add(new Movie("ToDelete", 2000, "Action"));
 
@@ -272,12 +283,14 @@ public class MoviesApiTest {
     }
 
     @Test
+    @DisplayName("DELETE /movies/{id} — возвращает 404, если фильм не найден")
     void deleteMovie_whenNotFound_returnsNotFound() {
         HttpResponse<Void> response = deleteByIdMovieRequest(999);
         assertEquals(404, response.statusCode());
     }
 
     @Test
+    @DisplayName("GET /movies?year=... — фильтрует фильмы по году")
     void getMoviesByYear_whenValid_returnsFiltered() {
         store.add(new Movie("2020 A", 2020, "X"));
         store.add(new Movie("2020 B", 2020, "X"));
@@ -292,6 +305,7 @@ public class MoviesApiTest {
     }
 
     @Test
+    @DisplayName("GET /movies?year=... — возвращает пустой массив, если нет совпадений")
     void getMoviesByYear_whenNoMatches_returnsEmptyArray() {
         store.add(new Movie("2021", 2021, "X"));
 
@@ -303,6 +317,7 @@ public class MoviesApiTest {
     }
 
     @Test
+    @DisplayName("GET /movies?year=... — возвращает 400, если год не число")
     void getMoviesByYear_whenYearNotNumber_returnsBadRequest() {
         HttpResponse<String> response = movieGetRequest("/movies?year=abc");
         ErrorResponse error = parseError(response);
