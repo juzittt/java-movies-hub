@@ -15,17 +15,37 @@ public class Movie {
         this.genre = genre;
     }
 
-    public int getId() { return id; }
-    public void setId(int id) { this.id = id; }
+    public int getId() {
+        return id;
+    }
 
-    public String getTitle() { return title; }
-    public void setTitle(String title) { this.title = title; }
+    public void setId(int id) {
+        this.id = id;
+    }
 
-    public int getReleaseYear() { return releaseYear; }
-    public void setReleaseYear(int releaseYear) { this.releaseYear = releaseYear; }
+    public String getTitle() {
+        return title;
+    }
 
-    public String getGenre() { return genre; }
-    public void setGenre(String genre) { this.genre = genre; }
+    public void setTitle(String title) {
+        this.title = title;
+    }
+
+    public int getReleaseYear() {
+        return releaseYear;
+    }
+
+    public void setReleaseYear(int releaseYear) {
+        this.releaseYear = releaseYear;
+    }
+
+    public String getGenre() {
+        return genre;
+    }
+
+    public void setGenre(String genre) {
+        this.genre = genre;
+    }
 
     @Override
     public boolean equals(Object o) {
